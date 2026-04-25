@@ -1,9 +1,9 @@
-package com.mentorship.ecommerce_app.cart.repository;
+package com.mentorship.food_delivery_app.cart.repository;
 
-import com.mentorship.ecommerce_app.cart.dto.CartItemRequest;
-import com.mentorship.ecommerce_app.cart.dto.CartItemView;
-import com.mentorship.ecommerce_app.cart.entity.CartItem;
-import com.mentorship.ecommerce_app.cart.entity.CartItemId;
+import com.mentorship.food_delivery_app.cart.dto.CartItemRequest;
+import com.mentorship.food_delivery_app.cart.dto.CartItemView;
+import com.mentorship.food_delivery_app.cart.entity.CartItem;
+import com.mentorship.food_delivery_app.cart.entity.CartItemId;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -21,7 +21,7 @@ public interface CartItemRepository extends JpaRepository<CartItem, CartItemId> 
 
 
     @Query("""
-        SELECT new com.mentorship.ecommerce_app.cart.dto.CartItemView(
+        SELECT new com.mentorship.food_delivery_app.cart.dto.CartItemView(
             m.menuItemName,
             ci.cartItemQuantity,
             m.menuItemDescription,

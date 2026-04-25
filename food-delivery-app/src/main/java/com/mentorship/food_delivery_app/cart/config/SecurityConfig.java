@@ -1,4 +1,4 @@
-package com.mentorship.ecommerce_app.cart.config;
+package com.mentorship.food_delivery_app.cart.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

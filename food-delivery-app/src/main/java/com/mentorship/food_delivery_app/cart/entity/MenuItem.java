@@ -1,4 +1,4 @@
-package com.mentorship.ecommerce_app.cart.entity;
+package com.mentorship.food_delivery_app.cart.entity;
 
 import jakarta.persistence.*;
 import lombok.*;

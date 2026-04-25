@@ -1,4 +1,4 @@
-package com.mentorship.ecommerce_app.cart.dto;
+package com.mentorship.food_delivery_app.cart.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,9 +1,9 @@
-package com.mentorship.ecommerce_app.cart.controller;
-import com.mentorship.ecommerce_app.cart.dto.AddCartResponse;
-import com.mentorship.ecommerce_app.cart.dto.CartItemRequest;
-import com.mentorship.ecommerce_app.cart.dto.CartResponse;
-import com.mentorship.ecommerce_app.cart.dto.ClearCartResponse;
-import com.mentorship.ecommerce_app.cart.service.CartService;
+package com.mentorship.food_delivery_app.cart.controller;
+import com.mentorship.food_delivery_app.cart.dto.AddCartResponse;
+import com.mentorship.food_delivery_app.cart.dto.CartItemRequest;
+import com.mentorship.food_delivery_app.cart.dto.CartResponse;
+import com.mentorship.food_delivery_app.cart.dto.ClearCartResponse;
+import com.mentorship.food_delivery_app.cart.service.CartService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

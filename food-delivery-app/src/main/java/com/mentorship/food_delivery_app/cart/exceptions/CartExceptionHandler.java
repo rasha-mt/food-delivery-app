@@ -1,6 +1,6 @@
-package com.mentorship.ecommerce_app.cart.exceptions;
+package com.mentorship.food_delivery_app.cart.exceptions;
 
-import com.mentorship.ecommerce_app.cart.dto.Status;
+import com.mentorship.food_delivery_app.cart.dto.Status;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;

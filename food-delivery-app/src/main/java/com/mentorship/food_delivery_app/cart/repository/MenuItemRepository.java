@@ -1,7 +1,7 @@
-package com.mentorship.ecommerce_app.cart.repository;
+package com.mentorship.food_delivery_app.cart.repository;
 
 
-import com.mentorship.ecommerce_app.cart.entity.MenuItem;
+import com.mentorship.food_delivery_app.cart.entity.MenuItem;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

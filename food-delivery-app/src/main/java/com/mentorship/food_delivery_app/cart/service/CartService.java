@@ -1,11 +1,11 @@
-package com.mentorship.ecommerce_app.cart.service;
+package com.mentorship.food_delivery_app.cart.service;
 
-import com.mentorship.ecommerce_app.cart.dto.*;
-import com.mentorship.ecommerce_app.cart.entity.*;
-import com.mentorship.ecommerce_app.cart.exceptions.CartLockedException;
-import com.mentorship.ecommerce_app.cart.exceptions.CartNotFoundException;
-import com.mentorship.ecommerce_app.cart.exceptions.MenuItemNotFoundException;
-import com.mentorship.ecommerce_app.cart.repository.*;
+import com.mentorship.food_delivery_app.cart.dto.*;
+import com.mentorship.food_delivery_app.cart.entity.*;
+import com.mentorship.food_delivery_app.cart.exceptions.CartLockedException;
+import com.mentorship.food_delivery_app.cart.exceptions.CartNotFoundException;
+import com.mentorship.food_delivery_app.cart.exceptions.MenuItemNotFoundException;
+import com.mentorship.food_delivery_app.cart.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
