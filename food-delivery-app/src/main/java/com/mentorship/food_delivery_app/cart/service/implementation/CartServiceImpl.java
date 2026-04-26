@@ -1,4 +1,4 @@
-package com.mentorship.food_delivery_app.cart.service;
+package com.mentorship.food_delivery_app.cart.service.implementation;
 
 import com.mentorship.food_delivery_app.cart.dto.*;
 import com.mentorship.food_delivery_app.cart.entity.*;
@@ -6,7 +6,10 @@ import com.mentorship.food_delivery_app.cart.exceptions.CartLockedException;
 import com.mentorship.food_delivery_app.cart.exceptions.CartNotFoundException;
 import com.mentorship.food_delivery_app.cart.exceptions.MenuItemNotFoundException;
 import com.mentorship.food_delivery_app.cart.repository.*;
-import jakarta.transaction.Transactional;
+import com.mentorship.food_delivery_app.cart.service.contract.CartService;
+import com.mentorship.food_delivery_app.common.enums.ErrorMessage;
+import com.mentorship.food_delivery_app.common.enums.SuccessMessage;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,13 +18,15 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class CartService {
+public class CartServiceImpl implements CartService {
 
     private final CartRepository cartRepository;
     private final CartItemRepository cartItemRepository;
     private final MenuItemRepository menuItemRepository;
 
     //  CREATE CART
+   @Transactional
+    @Override
     public CartResponse createCart(UUID customerId) {
 
         Cart cart = cartRepository.findByCartCustomerId(customerId)
@@ -36,27 +41,29 @@ public class CartService {
     }
 
     //  VIEW CART
+    @Override
     public CartResponse viewCart(UUID customerId) {
 
         Cart cart = cartRepository.findByCartCustomerId(customerId)
-                .orElseThrow(() -> new CartNotFoundException("Cart not found for customer"));
+                .orElseThrow(() -> new CartNotFoundException(ErrorMessage.CART_NOT_FOUND.getErrorMessage()));
 
         return getCartItemsView(cart);
     }
 
     //  ADD ITEM
     @Transactional
+    @Override
     public AddCartResponse addItem(UUID itemId, int quantity, UUID customerId) {
 
         Cart cart = cartRepository.findByCartCustomerId(customerId)
-                .orElseThrow(() -> new CartNotFoundException("Cart not found"));
+                .orElseThrow(() -> new CartNotFoundException(ErrorMessage.CART_NOT_FOUND.getErrorMessage()));
 
         if (cart.isLocked()) {
-            throw new CartLockedException("Item cannot be added. Cart already checked out.");
+            throw new CartLockedException(ErrorMessage.CART_IS_LOCKED.getErrorMessage());
         }
 
         MenuItem menuItem = menuItemRepository.findById(itemId)
-                .orElseThrow(() -> new MenuItemNotFoundException("Menu item not found"));
+                .orElseThrow(() -> new MenuItemNotFoundException(ErrorMessage.MENU_ITEM_NOT_FOUND.getErrorMessage()));
 
         CartItemId id = new CartItemId(cart.getCartId(), itemId);
 
@@ -70,23 +77,24 @@ public class CartService {
             cartItemRepository.save(newItem);
         }
 
-        return new AddCartResponse(new Status("200", "Item added successfully"));
+        return new AddCartResponse(new Status("200", SuccessMessage.ITEM_ADDED.getSuccessMessage()));
     }
 
     // CLEAR CART
     @Transactional
+    @Override
     public ClearCartResponse clearCart(UUID customerId) {
 
         Cart cart = cartRepository.findByCartCustomerId(customerId)
-                .orElseThrow(() -> new CartNotFoundException("Cart not found"));
+                .orElseThrow(() -> new CartNotFoundException(ErrorMessage.CART_NOT_FOUND.getErrorMessage()));
 
         if (cart.isLocked()) {
-            throw new CartLockedException("Item cannot be added. Cart already checked out.");
+            throw new CartLockedException(ErrorMessage.CART_IS_LOCKED.getErrorMessage());
         }
         cartItemRepository.deleteByIdCartItemCartId(cart.getCartId());
 
         return new ClearCartResponse(
-                new Status("200", "Cart cleared successfully")
+                new Status("200", SuccessMessage.CART_CLEARED.getSuccessMessage())
         );
     }
 
