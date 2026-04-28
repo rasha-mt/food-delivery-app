@@ -8,14 +8,12 @@ public abstract class CartDomainException extends RuntimeException{
     private final HttpStatus httpStatus;
     private final String errorCode;
 
-    protected CartDomainException(String message, HttpStatus httpStatus, String errorCode) {
+    protected CartDomainException(String message,
+                                  HttpStatus httpStatus,
+                                  String errorCode) {
         super(message);
         this.httpStatus = httpStatus;
         this.errorCode = errorCode;
     }
-    protected CartDomainException(String message, Throwable cause, HttpStatus httpStatus, String errorCode) {
-        super(message, cause);
-        this.httpStatus = httpStatus;
-        this.errorCode = errorCode;
-    }
 }
+

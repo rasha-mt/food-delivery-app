@@ -2,10 +2,6 @@ package com.mentorship.food_delivery_app.common.exceptions;
 
 import com.mentorship.food_delivery_app.cart.exceptions.CartDomainException;
 import com.mentorship.food_delivery_app.common.dto.ErrorResponseDto;
-import com.mentorship.food_delivery_app.cart.dto.Status;
-import com.mentorship.food_delivery_app.cart.exceptions.CartLockedException;
-import com.mentorship.food_delivery_app.cart.exceptions.CartNotFoundException;
-import com.mentorship.food_delivery_app.cart.exceptions.MenuItemNotFoundException;
 import com.mentorship.food_delivery_app.common.enums.ErrorMessage;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -5,12 +5,16 @@ import org.springframework.http.HttpStatus;
 
 
 public class CartLockedException extends CartDomainException {
-        public CartLockedException(String message) {
-            super(message,HttpStatus.CONFLICT, ErrorMessage.CART_IS_LOCKED.getErrorMessage());
+        public CartLockedException() {
+            super(
+                    ErrorMessage.CART_IS_LOCKED.getErrorMessage(),
+                    HttpStatus.CONFLICT,
+                    ErrorMessage.CART_IS_LOCKED.getErrorCode()
+            );
         }
-        public CartLockedException(String message, Throwable cause) {
-        super(message, cause, HttpStatus.CONFLICT, ErrorMessage.CART_IS_LOCKED.getErrorMessage());
-    }
+
 
     }
+
+
 

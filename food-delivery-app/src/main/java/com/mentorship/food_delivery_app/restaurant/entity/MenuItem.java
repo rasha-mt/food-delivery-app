@@ -1,4 +1,4 @@
-package com.mentorship.food_delivery_app.cart.entity;
+package com.mentorship.food_delivery_app.restaurant.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -17,8 +17,7 @@ import java.util.UUID;
 public class MenuItem {
 
     @Id
-    @GeneratedValue
-
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "menu_item_id", nullable = false, updatable = false)
     private UUID menuItemId;
 
@@ -32,7 +31,7 @@ public class MenuItem {
     private String menuItemDescription;
 
     @Column(name = "menu_item_price", nullable = false)
-    private double menuItemPrice;
+    private BigDecimal menuItemPrice;
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;

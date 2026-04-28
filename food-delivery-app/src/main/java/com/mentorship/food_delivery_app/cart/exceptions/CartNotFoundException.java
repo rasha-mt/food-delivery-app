@@ -5,10 +5,13 @@ import org.springframework.http.HttpStatus;
 
 public class CartNotFoundException extends CartDomainException {
 
-    public CartNotFoundException(String message) {
-        super(message,HttpStatus.NOT_FOUND, ErrorMessage.CART_NOT_FOUND.getErrorMessage());
+    public CartNotFoundException() {
+        super(
+                ErrorMessage.CART_NOT_FOUND.getErrorMessage(),
+                HttpStatus.NOT_FOUND,
+                ErrorMessage.CART_NOT_FOUND.getErrorCode()
+        );
     }
-    public CartNotFoundException(String message, Throwable cause) {
-        super(message, cause, HttpStatus.NOT_FOUND, ErrorMessage.CART_NOT_FOUND.getErrorMessage());
-    }
+
 }
+
