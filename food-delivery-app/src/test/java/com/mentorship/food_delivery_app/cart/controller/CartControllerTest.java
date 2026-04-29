@@ -71,17 +71,15 @@ class CartControllerTest {
                 cartService.viewCart(cartId)
         ).thenReturn(response);
 
-
         mockMvc.perform(
-                        get("/api/cart/{id}", cartId)
+                        get("/api/v1/cart")
                 )
                 .andExpect(status().isOk())
 
                 .andExpect(
                         jsonPath("$.cartId")
-                                .value(cartId.toString())
-                )
-
+                                .value(
+                                        cart.getCartId().toString()))
                 .andExpect(
                         jsonPath("$.items[0].name")
                                 .value(
