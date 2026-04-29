@@ -1,3 +1,5 @@
+CREATE ALIAS IF NOT EXISTS uuidv7 FOR "com.mentorship.food_delivery_app.config.H2Functions.uuidv7";
+
 CREATE TABLE IF NOT EXISTS system_config
 (
     system_key   VARCHAR(50),
@@ -5,17 +7,15 @@ CREATE TABLE IF NOT EXISTS system_config
     system_type  VARCHAR(50)
 );
 
-------------------------------USER & CUSTOMER---------------------
-
 CREATE TABLE IF NOT EXISTS permission
 (
-    permission_id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    permission_id SERIAL PRIMARY KEY,
     permission    VARCHAR(20) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS role
 (
-    role_id   INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    role_id   SERIAL PRIMARY KEY,
     role_name VARCHAR(20) NOT NULL
 );
 
@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS role_permission
 
 CREATE TABLE IF NOT EXISTS user_type
 (
-    user_type_id   INT GENERATED ALWAYS AS IDENTITY,
+    user_type_id   SERIAL PRIMARY KEY,
     user_type_name VARCHAR(20) NOT NULL
 );
 
@@ -63,17 +63,15 @@ CREATE TABLE IF NOT EXISTS customer
 CREATE TABLE IF NOT EXISTS customer_address
 (
     customer_address_id           UUID DEFAULT uuidv7() PRIMARY KEY,
-    customer_address_customer_id  UUID        NOT NULL,
-    customer_address_label        VARCHAR(20) NOT NULL,
-    customer_address_city         VARCHAR(20) NOT NULL,
-    customer_address_street       VARCHAR(20) NOT NULL,
-    customer_address_building     VARCHAR(20) NOT NULL,
-    customer_address_apartment    VARCHAR(20) NOT NULL,
-    customer_address_phone_number VARCHAR(15) NOT NULL,
+    customer_address_customer_id  UUID         NOT NULL,
+    customer_address_label        VARCHAR(20)  NOT NULL,
+    customer_address_city         VARCHAR(20)  NOT NULL,
+    customer_address_street       VARCHAR(20)  NOT NULL,
+    customer_address_building     VARCHAR(20)  NOT NULL,
+    customer_address_apartment    VARCHAR(20)  NOT NULL,
+    customer_address_phone_number VARCHAR(15)  NOT NULL,
     customer_address_note         VARCHAR(500)
 );
-
-------------------------------RESTAURANT---------------------
 
 CREATE TABLE IF NOT EXISTS restaurant
 (
@@ -102,7 +100,7 @@ CREATE TABLE IF NOT EXISTS restaurant_branch
 
 CREATE TABLE IF NOT EXISTS category
 (
-    category_id   INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    category_id   SERIAL PRIMARY KEY,
     category_name VARCHAR(20) NOT NULL
 );
 
@@ -159,13 +157,11 @@ CREATE TABLE IF NOT EXISTS coupon
     coupon_last_modified  TIMESTAMP
 );
 
-------------------------------CART---------------------
-
 CREATE TABLE IF NOT EXISTS cart
 (
     cart_id              UUID DEFAULT uuidv7() PRIMARY KEY,
     cart_customer_id     UUID    NOT NULL,
-    is_locked            BOOLEAN DEFAULT FALSE,
+    is_locked CHAR(1) DEFAULT '0',
     cart_current_rest_id UUID
 );
 
@@ -177,8 +173,6 @@ CREATE TABLE IF NOT EXISTS cart_item
     cart_item_note     VARCHAR(255),
     PRIMARY KEY (cart_item_cart_id, menu_item_id)
 );
-
-------------------------------ORDER---------------------
 
 CREATE TABLE IF NOT EXISTS order_status
 (
@@ -197,14 +191,14 @@ CREATE TABLE IF NOT EXISTS order_tracking
 CREATE TABLE IF NOT EXISTS orders
 (
     order_id                   UUID DEFAULT uuidv7() PRIMARY KEY,
-    order_address_id           UUID          NOT NULL,
-    order_customer_id          UUID          NOT NULL,
-    order_restaurant_branch_id UUID          NOT NULL,
+    order_address_id           UUID           NOT NULL,
+    order_customer_id          UUID           NOT NULL,
+    order_restaurant_branch_id UUID           NOT NULL,
     order_coupon_id            UUID,
-    order_subtotal             DECIMAL(7, 2) CHECK (order_subtotal > 0),
-    order_fee                  DECIMAL(6, 2) DEFAULT 0,
+    order_subtotal             DECIMAL(7, 2)  CHECK (order_subtotal > 0),
+    order_fee                  DECIMAL(6, 2)  DEFAULT 0,
     order_total                DECIMAL(10, 2) NOT NULL,
-    order_date                 TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
+    order_date                 TIMESTAMP      DEFAULT CURRENT_TIMESTAMP,
     order_note                 VARCHAR(255)
 );
 
@@ -219,8 +213,6 @@ CREATE TABLE IF NOT EXISTS order_item
     order_item_note         VARCHAR(255)
 );
 
-------------------------------PAYMENT---------------------
-
 CREATE TABLE IF NOT EXISTS payment_integration_type
 (
     payment_integration_type_name VARCHAR(20) PRIMARY KEY
@@ -228,7 +220,7 @@ CREATE TABLE IF NOT EXISTS payment_integration_type
 
 CREATE TABLE IF NOT EXISTS payment_type_config
 (
-    payment_type_config_id   INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    payment_type_config_id   SERIAL PRIMARY KEY,
     payment_integration_type VARCHAR(20) NOT NULL,
     config_details           TEXT        NOT NULL
 );
