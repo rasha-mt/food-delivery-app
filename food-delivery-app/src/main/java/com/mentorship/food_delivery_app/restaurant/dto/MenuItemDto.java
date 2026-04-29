@@ -1,4 +1,11 @@
 package com.mentorship.food_delivery_app.restaurant.dto;
 
-public class MenuItemDto {
-}
+import java.math.BigDecimal;
+import java.util.UUID;
+
+public record MenuItemDto(
+        UUID id,
+        String name,
+        BigDecimal price,
+        String description
+) { }

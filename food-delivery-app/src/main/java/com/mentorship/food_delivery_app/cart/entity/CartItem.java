@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import lombok.*;
 
+import java.math.BigDecimal;
+
 @Entity
 @Table(name = "cart_item")
 @Getter
@@ -27,4 +29,11 @@ public class CartItem {
 
     @Column(name = "cart_item_note")
     private String cartItemNote;
+
+    @ManyToOne
+    private Cart cart;
+
+    public BigDecimal getTotalPrice() {
+        return this.menuItem.getMenuItemPrice().multiply(BigDecimal.valueOf(this.cartItemQuantity));
+    }
 }

@@ -1,10 +1,9 @@
-package com.mentorship.food_delivery_app.customer.dto;
+package com.mentorship.food_delivery_app.customer.entity;
 
 import com.mentorship.food_delivery_app.cart.entity.Cart;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @Entity
