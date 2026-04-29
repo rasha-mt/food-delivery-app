@@ -1,17 +1,25 @@
 package com.mentorship.food_delivery_app.cart.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import com.mentorship.food_delivery_app.cart.entity.CartItem;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
-@AllArgsConstructor
-@Getter
-public class CartItemView {
+public record CartItemView(
+        UUID menuItemId,
+        String menuItemName,
+        Integer quantity,
+        BigDecimal subTotal,
+        String note
+) {
 
-    private String itemName;
-    private int quantity;
-    private String description;
-    private BigDecimal unitPrice;
-
+    public static CartItemView fromCartItem(CartItem cartItem) {
+        return new CartItemView(
+                cartItem.getMenuItem().getMenuItemId(),
+                cartItem.getMenuItem().getMenuItemName(),
+                cartItem.getCartItemQuantity(),
+                cartItem.getTotalPrice(),
+                cartItem.getCartItemNote()
+        );
+    }
 }

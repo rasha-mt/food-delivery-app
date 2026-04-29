@@ -20,7 +20,7 @@ public interface CartItemRepository extends JpaRepository<CartItem, CartItemId> 
     void deleteByIdCartItemCartId(UUID cartId);
 
 
-    @Query("""
+   /* @Query("""
         SELECT new com.mentorship.food_delivery_app.cart.dto.CartItemView(
             m.menuItemName,
             ci.cartItemQuantity,
@@ -31,5 +31,5 @@ public interface CartItemRepository extends JpaRepository<CartItem, CartItemId> 
         JOIN ci.menuItem m
         WHERE ci.id.cartItemCartId = :cartId
     """)
-    List<CartItemView> findCartItemViews(UUID cartId);
+    List<CartItemView> findCartItemViews(UUID cartId);*/
 }

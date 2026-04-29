@@ -1,9 +1,12 @@
 package com.mentorship.food_delivery_app.cart.entity;
 
+import com.mentorship.food_delivery_app.customer.entity.Customer;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -18,8 +21,12 @@ public class Cart {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID cartId;
 
-    @Column(name = "cart_customer_id", nullable = false)
-    private UUID cartCustomerId;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cart_customer_id", nullable = false,updatable = false)
+    private Customer customer;
+
+    @OneToMany(mappedBy = "cart")
+    private List<CartItem> cartItems;
 
     @Column(name = "cart_current_rest_id")
     private UUID cartCurrentRestId;
@@ -30,4 +37,12 @@ public class Cart {
     public boolean isLocked() {
         return this.isLocked == 'Y';
     }
+
+    public BigDecimal calculateTotal() {
+        return this.getCartItems()
+                .stream()
+                .map(CartItem::getTotalPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
 }
