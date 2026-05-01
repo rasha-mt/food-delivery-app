@@ -7,6 +7,8 @@ import com.mentorship.food_delivery_app.cart.repository.*;
 import com.mentorship.food_delivery_app.cart.service.contract.CartService;
 import com.mentorship.food_delivery_app.common.dto.StatusDto;
 import com.mentorship.food_delivery_app.common.enums.SuccessMessage;
+import com.mentorship.food_delivery_app.customer.entity.Customer;
+import com.mentorship.food_delivery_app.customer.service.CustomerService;
 import com.mentorship.food_delivery_app.restaurant.entity.MenuItem;
 import com.mentorship.food_delivery_app.restaurant.exceptions.MenuItemDiffRest;
 import com.mentorship.food_delivery_app.restaurant.exceptions.MenuItemNotFoundException;
@@ -26,23 +28,26 @@ public class CartServiceImpl implements CartService {
     private final CartRepository cartRepository;
     private final CartItemRepository cartItemRepository;
     private final MenuItemRepository menuItemRepository;
+    private final CustomerService customerService;
 
     //  CREATE CART
    @Transactional
     @Override
     public CartResponseWrapper createCart(UUID customerId) {
 
-        Cart cart = cartRepository.findByCartCustomerId(customerId).orElse(null);
+       Cart cart = cartRepository.findByCartCustomerId(customerId).orElse(null);
+       Customer customer = customerService.getCustomer(customerId);
+        boolean created = false;
        if (cart == null) {
            cart = new Cart();
-           cart.setCartCustomerId(customerId);
+           cart.setCustomer(customer);
            cart.setIsLocked('N');
            cart = cartRepository.save(cart);
 
-           return new CartResponseWrapper(getCartItemsView(cart), true);
+           created=true;
        }
 
-       return new CartResponseWrapper(getCartItemsView(cart), false);
+       return new CartResponseWrapper(getCartItemsView(cart), created);
    }
 
     //  VIEW CART
@@ -68,8 +73,6 @@ public class CartServiceImpl implements CartService {
             throw new CartLockedException();
         }
 
-
-
         MenuItem menuItem = menuItemRepository.findById(itemId)
                 .orElseThrow(MenuItemNotFoundException::new);
 
@@ -91,7 +94,7 @@ public class CartServiceImpl implements CartService {
             existingItem.setCartItemQuantity(existingItem.getCartItemQuantity() + quantity);
             cartItemRepository.save(existingItem);
         } else {
-            CartItem newItem = new CartItem(id, menuItem, quantity, null);
+            CartItem newItem = new CartItem(id, menuItem, quantity, null,cart);
             cartItemRepository.save(newItem);
         }
 
@@ -120,7 +123,7 @@ public class CartServiceImpl implements CartService {
     private CartResponse getCartItemsView(Cart cart) {
 
         List<CartItemView> items =
-                cartItemRepository.findCartItemViews(cart.getCartId());
+                cartItemRepository.findByIdCartItemCartId(cart.getCartId());
 
         BigDecimal totalPrice = items.stream()
                 .map(item -> item.getUnitPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
