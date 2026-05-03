@@ -1,4 +1,4 @@
-package com.mentorship.food_delivery_app.cart.entity;
+package com.mentorship.food_delivery_app.cart.model;
 
 import com.mentorship.food_delivery_app.customer.entity.Customer;
 import jakarta.persistence.*;
@@ -25,7 +25,7 @@ public class Cart {
     @JoinColumn(name = "cart_customer_id", nullable = false,updatable = false)
     private Customer customer;
 
-    @OneToMany(mappedBy = "cart")
+    @OneToMany(mappedBy = "cart",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CartItem> cartItems;
 
     @Column(name = "cart_current_rest_id")
@@ -35,14 +35,10 @@ public class Cart {
     private Character isLocked;
 
     public boolean isLocked() {
-        return this.isLocked == 'Y';
+        return this.isLocked == 1;
     }
 
-    public BigDecimal calculateTotal() {
-        return this.getCartItems()
-                .stream()
-                .map(CartItem::getTotalPrice)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-    }
+    public BigDecimal cartTotal;
+
 
 }

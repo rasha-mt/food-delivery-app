@@ -1,6 +1,6 @@
 package com.mentorship.food_delivery_app.cart.repository;
 
-import com.mentorship.food_delivery_app.cart.entity.Cart;
+import com.mentorship.food_delivery_app.cart.model.Cart;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -11,5 +11,5 @@ import java.util.UUID;
 public interface CartRepository extends JpaRepository<Cart, UUID> {
 
 
-    Optional<Cart> findByCartCustomerId(UUID cartCustomerId);
+    Optional<Cart> findByCustomerId(UUID cartCustomerId);
 }

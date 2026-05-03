@@ -1,6 +1,7 @@
 package com.mentorship.food_delivery_app.cart.controller;
 
-import com.mentorship.food_delivery_app.cart.dto.*;
+import com.mentorship.food_delivery_app.cart.dto.Requests.CartItemRequest;
+import com.mentorship.food_delivery_app.cart.dto.CartDto;
 import com.mentorship.food_delivery_app.cart.service.contract.CartService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,46 +18,46 @@ public class CartController {
 
     private final CartService cartService;
 
-    @PostMapping("/create")
-    public ResponseEntity<CartResponse> createCart() {
+    @PostMapping
+    public ResponseEntity<CartDto> createCart() {
         // Adding Customer manually for testing
         UUID customerId = UUID.fromString("11111111-1111-1111-1111-111111111111");
         ;// getCustomerIdFromToken(); // extracted from JWT
 
-        CartResponseWrapper response = cartService.createCart(customerId);
+        CartDto response = cartService.createCart(customerId);
 
-        return response.isCreated()
-                ? ResponseEntity.status(HttpStatus.CREATED).body(response.getCartResponse())
-                : ResponseEntity.ok(response.getCartResponse());
+        return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/me")
-    public ResponseEntity<CartResponse> viewCart() {
+    @GetMapping
+    public ResponseEntity<CartDto> viewCart() {
         // Adding Customer manually for testing
         UUID customerId = UUID.fromString("11111111-1111-1111-1111-111111111111");
         ;// getCustomerIdFromToken(); // extracted from JWT
 
-        CartResponse response = cartService.viewCart(customerId);
+        CartDto response = cartService.viewCart(customerId);
 
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/add")
-    public ResponseEntity<AddCartResponse> addItem(@RequestBody @Valid CartItemRequest item) {
+    public ResponseEntity<?> addItem(@RequestBody @Valid CartItemRequest item) {
         // Adding Customer manually for testing
         UUID customerId = UUID.fromString("11111111-1111-1111-1111-111111111111");
         ;// getCustomerIdFromToken(); // extracted from JWT
-        AddCartResponse response = cartService.addItem(item.getMenuItemId(), item.getQuantity(), customerId);
-        return ResponseEntity.ok(response);
+        cartService.addItem(item.getMenuItemId(), item.getQuantity(), customerId);
+
+        return ResponseEntity.ok("successfully added item");
     }
 
-    @DeleteMapping("/clear")
-    public ResponseEntity<ClearCartResponse> clearCart() {
+    @DeleteMapping("/clear/{cartId}")
+    public ResponseEntity<?> clearCart(@PathVariable UUID CartID) {
         // Adding Customer manually for testing
         UUID customerId = UUID.fromString("11111111-1111-1111-1111-111111111111");
         // getCustomerIdFromToken(); // extracted from JWT
-        ClearCartResponse response = cartService.clearCart(customerId);
-        return ResponseEntity.ok(response);
+
+        cartService.clearCart(CartID,customerId);
+        return ResponseEntity.noContent().build();
     }
 
     /*

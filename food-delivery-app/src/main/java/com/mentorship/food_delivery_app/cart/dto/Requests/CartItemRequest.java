@@ -1,4 +1,4 @@
-package com.mentorship.food_delivery_app.cart.dto;
+package com.mentorship.food_delivery_app.cart.dto.Requests;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;

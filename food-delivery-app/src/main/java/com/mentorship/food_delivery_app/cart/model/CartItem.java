@@ -1,4 +1,4 @@
-package com.mentorship.food_delivery_app.cart.entity;
+package com.mentorship.food_delivery_app.cart.model;
 
 import com.mentorship.food_delivery_app.restaurant.entity.MenuItem;
 import jakarta.persistence.*;
@@ -13,8 +13,7 @@ import java.util.UUID;
 @Table(name = "cart_item")
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Builder
 public class CartItem {
 
     @Id
@@ -39,4 +38,5 @@ public class CartItem {
     public BigDecimal getTotalPrice() {
         return this.menuItem.getMenuItemPrice().multiply(BigDecimal.valueOf(this.cartItemQuantity));
     }
+
 }

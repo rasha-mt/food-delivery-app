@@ -1,6 +1,6 @@
 package com.mentorship.food_delivery_app.customer.entity;
 
-import com.mentorship.food_delivery_app.cart.entity.Cart;
+import com.mentorship.food_delivery_app.cart.model.Cart;
 import jakarta.persistence.*;
 import lombok.*;
 

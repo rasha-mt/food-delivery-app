@@ -1,7 +1,9 @@
 package com.mentorship.food_delivery_app.cart.service.implementation;
 
 import com.mentorship.food_delivery_app.cart.dto.*;
-import com.mentorship.food_delivery_app.cart.entity.*;
+import com.mentorship.food_delivery_app.cart.dto.CartDto;
+import com.mentorship.food_delivery_app.cart.mapper.CartMapper;
+import com.mentorship.food_delivery_app.cart.model.*;
 import com.mentorship.food_delivery_app.cart.exceptions.*;
 import com.mentorship.food_delivery_app.cart.repository.*;
 import com.mentorship.food_delivery_app.cart.service.contract.CartService;
@@ -17,7 +19,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,47 +34,44 @@ public class CartServiceImpl implements CartService {
     //  CREATE CART
    @Transactional
     @Override
-    public CartResponseWrapper createCart(UUID customerId) {
+    public CartDto createCart(UUID customerId) {
 
-       Cart cart = cartRepository.findByCartCustomerId(customerId).orElse(null);
+       Cart cart = cartRepository.findByCustomerId(customerId).orElse(null);
        Customer customer = customerService.getCustomer(customerId);
-        boolean created = false;
+       
        if (cart == null) {
            cart = new Cart();
            cart.setCustomer(customer);
            cart.setIsLocked('N');
            cart = cartRepository.save(cart);
-
-           created=true;
        }
 
-       return new CartResponseWrapper(getCartItemsView(cart), created);
+       return toCartDto(cart);
    }
 
     //  VIEW CART
     @Transactional(readOnly = true)
     @Override
-    public CartResponse viewCart(UUID customerId) {
+    public CartDto viewCart(UUID customerId) {
 
-        Cart cart = cartRepository.findByCartCustomerId(customerId)
+        Cart cart = cartRepository.findByCustomerId(customerId)
                 .orElseThrow(CartNotFoundException::new);
 
-        return getCartItemsView(cart);
+        return toCartDto(cart);
     }
 
     //  ADD ITEM
     @Transactional
     @Override
-    public AddCartResponse addItem(UUID itemId, int quantity, UUID customerId) {
+    public void addItem(UUID menuItemId, int quantity, UUID customerId) {
 
-        Cart cart = cartRepository.findByCartCustomerId(customerId)
-                .orElseThrow(CartNotFoundException::new);
+        Cart cart = getCartByCustomerId(customerId);
 
         if (cart.isLocked()) {
             throw new CartLockedException();
         }
 
-        MenuItem menuItem = menuItemRepository.findById(itemId)
+        MenuItem menuItem = menuItemRepository.findById(menuItemId)
                 .orElseThrow(MenuItemNotFoundException::new);
 
         if (cart.getCartCurrentRestId() != null &&
@@ -86,53 +84,63 @@ public class CartServiceImpl implements CartService {
             cartRepository.save(cart);
         }
 
-        CartItemId id = new CartItemId(cart.getCartId(), itemId);
+        CartItem item = cartItemRepository
+                .findByCartIdAndMenuItemId(cart, menuItemId)
+                .orElseGet(() -> {
+                   CartItem newItem=  CartItem
+                           .builder()
+                           .menuItem(menuItem)
+                           .cart(cart)
+                           .cartItemQuantity(quantity)
+                           .build();
+                   return newItem;
+                });
 
-        CartItem existingItem = cartItemRepository.findById(id).orElse(null);
+        item.setCartItemQuantity(quantity);
 
-        if (existingItem != null) {
-            existingItem.setCartItemQuantity(existingItem.getCartItemQuantity() + quantity);
-            cartItemRepository.save(existingItem);
-        } else {
-            CartItem newItem = new CartItem(id, menuItem, quantity, null,cart);
-            cartItemRepository.save(newItem);
-        }
-
-        return new AddCartResponse(new StatusDto("200", SuccessMessage.ITEM_ADDED.getSuccessMessage()));
+        cartItemRepository.save(item);
     }
 
     // CLEAR CART
     @Transactional
     @Override
-    public ClearCartResponse clearCart(UUID customerId) {
+    public void clearCart(UUID  cartId, UUID customerId) {
+        Cart cart = getCartByCustomerId(customerId);
 
-        Cart cart = cartRepository.findByCartCustomerId(customerId)
-                .orElseThrow(CartNotFoundException::new);
+        if(!cart.getCartId().equals(cartId)) {
+            throw new CartNotFoundException();
+        }
 
         if (cart.isLocked()) {
             throw new CartLockedException();
         }
         cartItemRepository.deleteByIdCartItemCartId(cart.getCartId());
-
-        return new ClearCartResponse(
-                new StatusDto("200", SuccessMessage.CART_CLEARED.getSuccessMessage())
-        );
     }
 
     //  VIEW MAPPING
-    private CartResponse getCartItemsView(Cart cart) {
+    private List<CartItemDto> CartItemsMapping(Cart cart) {
 
-        List<CartItemView> items =
-                cartItemRepository.findByIdCartItemCartId(cart.getCartId());
+        return cartItemRepository
+                .findByCartId(cart.getCartId())
+                .stream()
+                .map(CartMapper::toDto)
+                .toList();
 
-        BigDecimal totalPrice = items.stream()
-                .map(item -> item.getUnitPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
 
-        return new CartResponse(
+    private CartDto toCartDto(Cart cart ){
+
+       List<CartItemDto> cartItems = CartItemsMapping(cart);
+
+        return new CartDto(
                 cart.getCartId(),
-                items,
-                totalPrice
+                cartItems,
+                cart.getCartTotal()
         );
+    }
+
+    private Cart getCartByCustomerId(UUID customerId) {
+        return cartRepository.findByCustomerId(customerId)
+                .orElseThrow(CartNotFoundException::new);
     }
 }

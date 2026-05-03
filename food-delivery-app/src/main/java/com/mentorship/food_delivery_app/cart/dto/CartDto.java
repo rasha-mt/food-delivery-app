@@ -9,10 +9,10 @@ import java.util.UUID;
 
 @AllArgsConstructor
 @Getter
-public class CartResponse {
+public class CartDto {
 
     private UUID cartId;
-    private List<CartItemView> items;
+    private List<CartItemDto> items;
     private BigDecimal totalPrice;
 
 }

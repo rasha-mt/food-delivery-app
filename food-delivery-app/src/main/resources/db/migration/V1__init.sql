@@ -154,7 +154,8 @@ CREATE TABLE IF NOT EXISTS cart
     cart_id              UUID PRIMARY KEY DEFAULT uuidv7(),
     cart_customer_id     UUID NOT NULL, -- REFERENCES customer(customer_id)
     is_locked            BIT              DEFAULT CAST(0 AS BIT),
-    cart_current_rest_id UUID           --REFERENCES restaurant_branch(branch_id)
+    cart_current_rest_id UUID    ,       --REFERENCES restaurant_branch(branch_id)
+    cart_total           DECIMAL(7, 2)
 );
 CREATE TABLE IF NOT EXISTS cart_item
 (   cart_item_id  UUID PRIMARY KEY DEFAULT uuidv7(),
