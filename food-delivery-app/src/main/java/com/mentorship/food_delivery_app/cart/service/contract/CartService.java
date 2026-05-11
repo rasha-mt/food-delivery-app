@@ -1,24 +1,22 @@
 package com.mentorship.food_delivery_app.cart.service.contract;
 
-
 import com.mentorship.food_delivery_app.cart.dto.CartDto;
-import com.mentorship.food_delivery_app.cart.model.Cart;
 
 import java.util.UUID;
 
 public interface CartService {
 
     // CREATE CART
-    CartDto createCart(UUID customerId);
+    CartDto createCart();
 
     // VIEW CART
-    CartDto viewCart(UUID customerId);
+    CartDto viewCart();
 
     // ADD ITEM
-    void addItem(UUID itemId, int quantity, UUID customerId);
+    void addItem(UUID itemId, int quantity);
 
     // CLEAR CART
-    void clearCart(UUID cartId, UUID customerId);
+    void clearCart(UUID cartId);
 
 
 }

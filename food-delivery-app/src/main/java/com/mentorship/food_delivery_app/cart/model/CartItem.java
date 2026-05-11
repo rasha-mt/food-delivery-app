@@ -1,6 +1,6 @@
 package com.mentorship.food_delivery_app.cart.model;
 
-import com.mentorship.food_delivery_app.restaurant.entity.MenuItem;
+import com.mentorship.food_delivery_app.restaurant.model.MenuItem;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import lombok.*;
@@ -14,11 +14,15 @@ import java.util.UUID;
 @Getter
 @Setter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
+
 public class CartItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID cartItemId;
+    @JoinColumn(name = "cart_item_id")
+    private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "menu_item_id")
@@ -37,6 +41,14 @@ public class CartItem {
 
     public BigDecimal getTotalPrice() {
         return this.menuItem.getMenuItemPrice().multiply(BigDecimal.valueOf(this.cartItemQuantity));
+    }
+
+    public  static CartItem addItem(MenuItem menuItem, Cart cart) {
+
+        return CartItem.builder()
+                .menuItem(menuItem)
+                .cart(cart)
+                .build();
     }
 
 }

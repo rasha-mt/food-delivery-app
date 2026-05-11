@@ -1,9 +1,9 @@
 package com.mentorship.food_delivery_app.cart.model;
 
 import com.mentorship.food_delivery_app.customer.entity.Customer;
+import com.mentorship.food_delivery_app.restaurant.model.MenuItem;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -15,11 +15,15 @@ import java.util.UUID;
 })
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Cart {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID cartId;
+    @Column(name = "cart_id")
+    private UUID id;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cart_customer_id", nullable = false,updatable = false)
@@ -32,13 +36,17 @@ public class Cart {
     private UUID cartCurrentRestId;
 
     @Column(name = "is_locked")
-    private Character isLocked;
+    private boolean isLocked;
 
-    public boolean isLocked() {
-        return this.isLocked == 1;
-    }
+//    public boolean checkIsLocked() {
+//        return this.isLocked;
+//    }
 
     public BigDecimal cartTotal;
 
+
+    public static Cart buildCart(Customer customer) {
+        return Cart.builder().customer(customer).isLocked(false).build();
+    }
 
 }

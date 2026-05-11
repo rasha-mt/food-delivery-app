@@ -11,9 +11,11 @@ import java.util.UUID;
 @Getter
 @AllArgsConstructor
 public class CartItemRequest {
-    @NotNull
-    private UUID  menuItemId;
-    @Min(1)
-    @Max(30)
+
+    @NotNull(message = "Menu item ID is required")
+    private UUID menuItemId;
+
+    @Min(value = 1, message = "Quantity must be at least 1")
+    @Max(value = 30, message = "Quantity cannot exceed 30")
     private int quantity;
 }
