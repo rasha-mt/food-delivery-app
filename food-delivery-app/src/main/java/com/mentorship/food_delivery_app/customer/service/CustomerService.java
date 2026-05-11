@@ -1,8 +1,11 @@
 package com.mentorship.food_delivery_app.customer.service;
 
+import com.mentorship.food_delivery_app.common.exceptions.ResourceNotFoundException;
 import com.mentorship.food_delivery_app.customer.entity.Customer;
 import com.mentorship.food_delivery_app.customer.repository.CustomerRepository;
 import java.util.UUID;
+
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -14,8 +17,16 @@ public class CustomerService {
         this.customerRepository = customerRepository;
     }
 
-    public Customer getCustomer(UUID id) {
-        return customerRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Customer not found"));
+
+    public Customer getCustomer() {
+
+        UUID customerId =(UUID) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
+
+        return customerRepository.findById(customerId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Customer not found"));
     }
 }

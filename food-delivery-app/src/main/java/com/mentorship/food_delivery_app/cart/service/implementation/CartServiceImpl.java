@@ -7,13 +7,14 @@ import com.mentorship.food_delivery_app.cart.model.*;
 import com.mentorship.food_delivery_app.cart.exceptions.*;
 import com.mentorship.food_delivery_app.cart.repository.*;
 import com.mentorship.food_delivery_app.cart.service.contract.CartService;
-import com.mentorship.food_delivery_app.common.dto.StatusDto;
-import com.mentorship.food_delivery_app.common.enums.SuccessMessage;
 import com.mentorship.food_delivery_app.customer.entity.Customer;
 import com.mentorship.food_delivery_app.customer.service.CustomerService;
-import com.mentorship.food_delivery_app.restaurant.entity.MenuItem;
+import com.mentorship.food_delivery_app.restaurant.model.MenuItem;
 import com.mentorship.food_delivery_app.restaurant.exceptions.MenuItemDiffRest;
 import com.mentorship.food_delivery_app.restaurant.exceptions.MenuItemNotFoundException;
+import com.mentorship.food_delivery_app.restaurant.service.MenuItemService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,23 +29,16 @@ public class CartServiceImpl implements CartService {
 
     private final CartRepository cartRepository;
     private final CartItemRepository cartItemRepository;
-    private final MenuItemRepository menuItemRepository;
+    private final MenuItemService menuItemService;
     private final CustomerService customerService;
+    private static final Logger log = LoggerFactory.getLogger(CartServiceImpl.class);
 
     //  CREATE CART
    @Transactional
     @Override
-    public CartDto createCart(UUID customerId) {
-
-       Cart cart = cartRepository.findByCustomerId(customerId).orElse(null);
-       Customer customer = customerService.getCustomer(customerId);
-       
-       if (cart == null) {
-           cart = new Cart();
-           cart.setCustomer(customer);
-           cart.setIsLocked('N');
-           cart = cartRepository.save(cart);
-       }
+    public CartDto createCart() {
+       Customer customer = customerService.getCustomer();
+       Cart cart=getOrCreateCart(customer);
 
        return toCartDto(cart);
    }
@@ -52,9 +46,9 @@ public class CartServiceImpl implements CartService {
     //  VIEW CART
     @Transactional(readOnly = true)
     @Override
-    public CartDto viewCart(UUID customerId) {
-
-        Cart cart = cartRepository.findByCustomerId(customerId)
+    public CartDto viewCart() {
+        Customer customer = customerService.getCustomer();
+        Cart cart = cartRepository.findByCustomerId(customer.getId())
                 .orElseThrow(CartNotFoundException::new);
 
         return toCartDto(cart);
@@ -63,16 +57,16 @@ public class CartServiceImpl implements CartService {
     //  ADD ITEM
     @Transactional
     @Override
-    public void addItem(UUID menuItemId, int quantity, UUID customerId) {
+    public void addItem(UUID menuItemId, int quantity) {
+        Customer customer = customerService.getCustomer();
 
-        Cart cart = getCartByCustomerId(customerId);
+        Cart cart = getOrCreateCart(customer);
 
         if (cart.isLocked()) {
             throw new CartLockedException();
         }
 
-        MenuItem menuItem = menuItemRepository.findById(menuItemId)
-                .orElseThrow(MenuItemNotFoundException::new);
+        MenuItem menuItem = menuItemService.getMenuItem(menuItemId);
 
         if (cart.getCartCurrentRestId() != null &&
                 !cart.getCartCurrentRestId().equals(menuItem.getRestaurantMenuId())) {
@@ -84,44 +78,39 @@ public class CartServiceImpl implements CartService {
             cartRepository.save(cart);
         }
 
-        CartItem item = cartItemRepository
-                .findByCartIdAndMenuItemId(cart, menuItemId)
+        CartItem cartItem = cartItemRepository
+                .findByCartIdAndMenuItemId(cart.getId(), menuItemId)
                 .orElseGet(() -> {
-                   CartItem newItem=  CartItem
-                           .builder()
-                           .menuItem(menuItem)
-                           .cart(cart)
-                           .cartItemQuantity(quantity)
-                           .build();
-                   return newItem;
+                    return CartItem.addItem(menuItem,cart);
                 });
 
-        item.setCartItemQuantity(quantity);
+        cartItem.setCartItemQuantity(quantity);
 
-        cartItemRepository.save(item);
+        cartItemRepository.save(cartItem);
     }
 
     // CLEAR CART
     @Transactional
     @Override
-    public void clearCart(UUID  cartId, UUID customerId) {
-        Cart cart = getCartByCustomerId(customerId);
+    public void clearCart(UUID  cartId) {
+        Customer customer = customerService.getCustomer();
+        Cart cart = getOrCreateCart(customer);
 
-        if(!cart.getCartId().equals(cartId)) {
+        if(!cart.getId().equals(cartId)) {
             throw new CartNotFoundException();
         }
 
         if (cart.isLocked()) {
             throw new CartLockedException();
         }
-        cartItemRepository.deleteByIdCartItemCartId(cart.getCartId());
+        cartItemRepository.deleteByCartId(cart.getId());
     }
 
     //  VIEW MAPPING
     private List<CartItemDto> CartItemsMapping(Cart cart) {
 
         return cartItemRepository
-                .findByCartId(cart.getCartId())
+                .findByCartId(cart.getId())
                 .stream()
                 .map(CartMapper::toDto)
                 .toList();
@@ -133,14 +122,19 @@ public class CartServiceImpl implements CartService {
        List<CartItemDto> cartItems = CartItemsMapping(cart);
 
         return new CartDto(
-                cart.getCartId(),
+                cart.getId(),
                 cartItems,
                 cart.getCartTotal()
         );
     }
 
-    private Cart getCartByCustomerId(UUID customerId) {
-        return cartRepository.findByCustomerId(customerId)
-                .orElseThrow(CartNotFoundException::new);
+
+    private Cart getOrCreateCart(Customer customer) {
+        Cart cart = cartRepository.findByCustomerId(customer.getId()).orElseGet(() -> {
+            Cart newCart=Cart.buildCart(customer);
+            return cartRepository.save(newCart);
+        });
+        return cart;
     }
+
 }
