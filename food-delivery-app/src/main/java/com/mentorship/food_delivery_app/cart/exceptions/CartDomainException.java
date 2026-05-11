@@ -1,19 +1,14 @@
 package com.mentorship.food_delivery_app.cart.exceptions;
 
+import com.mentorship.food_delivery_app.common.exceptions.DomainException;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 @Getter
-public abstract class CartDomainException extends RuntimeException{
-    private final HttpStatus httpStatus;
-    private final String errorCode;
+public abstract class CartDomainException extends DomainException {
 
-    protected CartDomainException(String message,
-                                  HttpStatus httpStatus,
-                                  String errorCode) {
-        super(message);
-        this.httpStatus = httpStatus;
-        this.errorCode = errorCode;
+    protected CartDomainException(HttpStatus status, String errorCode, String message) {
+        super(status, errorCode, message);
     }
 }
 
