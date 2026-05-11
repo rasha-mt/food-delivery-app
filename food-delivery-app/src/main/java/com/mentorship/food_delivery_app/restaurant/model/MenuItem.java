@@ -1,4 +1,4 @@
-package com.mentorship.food_delivery_app.restaurant.entity;
+package com.mentorship.food_delivery_app.restaurant.model;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -19,7 +19,7 @@ public class MenuItem {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "menu_item_id", nullable = false, updatable = false)
-    private UUID menuItemId;
+    private UUID id;
 
     @Column(name = "restaurant_menu_id", nullable = false)
     private UUID restaurantMenuId;
