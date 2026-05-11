@@ -1,8 +1,8 @@
 .DS_Store
-
+.env
 # Maven build output
 target/
-
+.env
 # IntelliJ IDEA
 .idea/
 *.iml

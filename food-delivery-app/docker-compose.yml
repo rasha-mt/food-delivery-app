@@ -1,0 +1,52 @@
+#version: "3.9"
+#
+#services:
+#  db:
+#    image: postgres:18.3-alpine
+#    container_name: postgres-db
+#    restart: always
+#    env_file:
+#    - .env
+#    ports:
+#      - "5432:5432"
+#    volumes:
+#      - postgres_data:/var/lib/postgresql/data
+#    networks:
+#      - db-net
+#    healthcheck:
+#      test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER}"]
+#      interval: 5s
+#      timeout: 5s
+#      retries: 10
+#
+#  app:
+#    build: .
+#    env_file:
+#      - .env
+#    container_name: spring-app
+#    restart: always
+#    depends_on:
+#      db:
+#        condition: service_healthy
+#    networks:
+#      - db-net
+#      - api-net
+#    ports:
+#      - "8080:8080"
+#    environment:
+#      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB}
+#      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+#      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+#      SPRING_JPA_HIBERNATE_DDL_AUTO: validate
+#      SPRING_FLYWAY_ENABLED: "true"
+#
+#volumes:
+#  postgres_data:
+#
+#networks:
+#  db-net:
+#    driver: bridge
+#    internal: true   # 🔒 DB private
+#
+#  api-net:
+#    driver: bridge
