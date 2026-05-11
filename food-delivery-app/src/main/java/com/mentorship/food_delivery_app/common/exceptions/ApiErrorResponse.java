@@ -1,4 +1,4 @@
-package com.mentorship.food_delivery_app.common.dto;
+package com.mentorship.food_delivery_app.common.exceptions;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
