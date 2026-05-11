@@ -15,9 +15,9 @@ public interface CartItemRepository extends JpaRepository<CartItem, UUID> {
 
     List<CartItem> findByCartId(UUID cartId);
 
-    void deleteByIdCartItemCartId(UUID cartId);
+    void deleteByCartId(UUID cartId);
 
-    Optional<CartItem> findByCartIdAndMenuItemId(Cart cart, UUID menuItemId);
+    Optional<CartItem> findByCartIdAndMenuItemId(UUID cartId, UUID menuItemId);
    /* @Query("""
         SELECT new com.mentorship.food_delivery_app.cart.dto.CartItemView(
             m.menuItemName,

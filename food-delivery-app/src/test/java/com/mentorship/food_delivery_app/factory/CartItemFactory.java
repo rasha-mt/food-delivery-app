@@ -2,27 +2,51 @@ package com.mentorship.food_delivery_app.factory;
 
 import com.mentorship.food_delivery_app.cart.model.Cart;
 import com.mentorship.food_delivery_app.cart.model.CartItem;
-import com.mentorship.food_delivery_app.restaurant.entity.MenuItem;
+import com.mentorship.food_delivery_app.cart.repository.CartItemRepository;
+import com.mentorship.food_delivery_app.restaurant.model.MenuItem;
+import com.mentorship.food_delivery_app.restaurant.repository.MenuItemRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.testcontainers.shaded.org.checkerframework.checker.units.qual.C;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
-
+@Component
 public class CartItemFactory {
+    @Autowired
+    MenuItemFactory menuItemFactory;
+    @Autowired
+    CartItemRepository cartItemRepository;
 
-    public static CartItem create(
-            Cart cart,
-            MenuItem menuItem
+    public  List<CartItem> create(
+            int count, Cart cart, UUID restaurantId
     ) {
 
-        int quantity =
-                ThreadLocalRandom.current()
-                        .nextInt(1,6);
-        CartItem item = CartItem
-                .builder()
-                .cartItemQuantity(quantity)
-                .cart(cart)
-                .menuItem(menuItem)
-                .build();
+            List<CartItem> cartItems=new ArrayList<>();
 
-        return item;
+            for (int i = 0; i < count; i++) {
+                MenuItem menuItem =  menuItemFactory.create(restaurantId);
+
+                CartItem cartItem =CartItem.addItem(menuItem,cart);
+                cartItem.setCartItemQuantity(i+1);
+                cartItems.add(cartItem);
+            }
+            return cartItems;
     }
+
+    public  List<CartItem> createWithMenuItem(
+            Cart cart, UUID restaurantId,MenuItem menuItem
+    ) {
+
+        List<CartItem> cartItems=new ArrayList<>();
+
+            CartItem cartItem =CartItem.addItem(menuItem,cart);
+            cartItem.setCartItemQuantity(1);
+            cartItems.add(cartItem);
+
+        return cartItems;
+    }
+
 }
