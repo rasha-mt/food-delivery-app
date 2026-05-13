@@ -3,6 +3,7 @@ package com.mentorship.food_delivery_app.order.service;
 import com.mentorship.food_delivery_app.customer.entity.Customer;
 import com.mentorship.food_delivery_app.customer.service.CustomerService;
 import com.mentorship.food_delivery_app.order.dto.OrderDto;
+import com.mentorship.food_delivery_app.order.dto.requests.OrderItemRequest;
 import com.mentorship.food_delivery_app.order.dto.requests.PlaceOrderRequest;
 import com.mentorship.food_delivery_app.order.enums.OrderStatus;
 import com.mentorship.food_delivery_app.order.event.OrderCanceledEvent;
@@ -15,13 +16,17 @@ import com.mentorship.food_delivery_app.order.exceptions.OrderAlreadyProcessedEx
 import com.mentorship.food_delivery_app.order.exceptions.OrderNotFoundException;
 import com.mentorship.food_delivery_app.order.mapper.OrderMapper;
 import com.mentorship.food_delivery_app.order.model.Order;
+import com.mentorship.food_delivery_app.order.model.OrderItem;
 import com.mentorship.food_delivery_app.order.repository.OrderRepository;
+import com.mentorship.food_delivery_app.restaurant.model.MenuItem;
+import com.mentorship.food_delivery_app.restaurant.service.MenuItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,8 +38,10 @@ public class OrderService {
     private final ApplicationEventPublisher eventPublisher;
     private final CustomerService customerService;
     private final OrderMapper orderMapper;
+    private final MenuItemService menuItemService;
 
     public Order placeOrder(PlaceOrderRequest request) {
+
         Customer customer = customerService.getCustomer();
 
         Order order = Order.builder()
@@ -42,8 +49,32 @@ public class OrderService {
                 .restaurantId(request.restaurantId())
                 .status(OrderStatus.PENDING)
                 .totalPrice(BigDecimal.ZERO)
+                .items(new ArrayList<>())
                 .createdAt(LocalDateTime.now())
                 .build();
+
+        BigDecimal total = BigDecimal.ZERO;
+
+        for (OrderItemRequest itemReq : request.items()) {
+            MenuItem menuItem =menuItemService.getMenuItem(itemReq.menuItemId());
+
+            OrderItem item = OrderItem.builder()
+                    .menuItemId(menuItem.getId())
+                    .menuItemName(menuItem.getMenuItemName())
+                    .quantity(itemReq.quantity())
+                    .unitPrice(menuItem.getMenuItemPrice())
+                    .subTotal(
+                            menuItem.getMenuItemPrice()
+                                    .multiply(BigDecimal.valueOf(itemReq.quantity()))
+                    )
+                    .build();
+
+            order.addItem(item); //
+
+            total = total.add(item.getSubTotal());
+        }
+
+        order.setTotalPrice(total);
 
         Order saved = orderRepository.save(order);
 
