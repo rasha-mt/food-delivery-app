@@ -1,4 +1,10 @@
 package com.mentorship.food_delivery_app.order.exceptions;
 
-public class OrderDomainException {
+import com.mentorship.food_delivery_app.common.exceptions.DomainException;
+import org.springframework.http.HttpStatus;
+
+public class OrderDomainException extends DomainException {
+    public OrderDomainException(HttpStatus status, String code, String message) {
+        super(status, code, message);
+    }
 }

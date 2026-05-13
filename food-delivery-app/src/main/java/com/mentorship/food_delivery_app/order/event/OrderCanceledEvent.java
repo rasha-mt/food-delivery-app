@@ -1,4 +1,5 @@
 package com.mentorship.food_delivery_app.order.event;
 
-public class OrderCanceledEvent {
-}
+import com.mentorship.food_delivery_app.order.model.Order;
+
+public record OrderCanceledEvent(Order order) {}

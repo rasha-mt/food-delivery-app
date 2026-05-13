@@ -1,4 +1,131 @@
 package com.mentorship.food_delivery_app.order.service;
 
+import com.mentorship.food_delivery_app.customer.entity.Customer;
+import com.mentorship.food_delivery_app.customer.service.CustomerService;
+import com.mentorship.food_delivery_app.order.dto.OrderDto;
+import com.mentorship.food_delivery_app.order.dto.requests.PlaceOrderRequest;
+import com.mentorship.food_delivery_app.order.enums.OrderStatus;
+import com.mentorship.food_delivery_app.order.event.OrderCanceledEvent;
+import com.mentorship.food_delivery_app.order.event.OrderPlacedEvent;
+import com.mentorship.food_delivery_app.order.event.OrderStatusUpdatedEvent;
+import com.mentorship.food_delivery_app.order.exceptions.InvalidOrderStatusException;
+import com.mentorship.food_delivery_app.order.exceptions.OrderAlreadyCanceledException;
+import com.mentorship.food_delivery_app.order.exceptions.OrderAlreadyProcessedException;
+import com.mentorship.food_delivery_app.order.exceptions.OrderNotFoundException;
+import com.mentorship.food_delivery_app.order.mapper.OrderMapper;
+import com.mentorship.food_delivery_app.order.model.Order;
+import com.mentorship.food_delivery_app.order.repository.OrderRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
+
+@Service
+@RequiredArgsConstructor
 public class OrderService {
+
+    private final OrderRepository orderRepository;
+    private final ApplicationEventPublisher eventPublisher;
+    private final CustomerService customerService;
+    private final OrderMapper orderMapper;
+
+    public Order placeOrder(PlaceOrderRequest request) {
+        Customer customer = customerService.getCustomer();
+
+        Order order = Order.builder()
+                .customer(customer)
+                .restaurantId(request.restaurantId())
+                .status(OrderStatus.PENDING)
+                .totalPrice(BigDecimal.ZERO)
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        Order saved = orderRepository.save(order);
+
+        eventPublisher.publishEvent(new OrderPlacedEvent(saved));
+
+        return saved;
+    }
+
+    public Order updateStatus(UUID orderId, OrderStatus status) {
+
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(OrderNotFoundException::new);
+
+        order.setStatus(status);
+        order.setUpdatedAt(LocalDateTime.now());
+
+        Order updated = orderRepository.save(order);
+
+        eventPublisher.publishEvent(new OrderStatusUpdatedEvent(updated));
+
+        return updated;
+    }
+
+    public List<OrderDto> getCustomerOrders() {
+        Customer customer = customerService.getCustomer();
+        List<Order> orders =
+                orderRepository.findByCustomerId(customer.getId());
+        return orders.stream()
+                .map(orderMapper::toDto)
+                .toList();
+    }
+
+    public OrderDto getOrderDetails(UUID orderId) {
+        Order order= orderRepository.findById(orderId)
+                .orElseThrow(OrderNotFoundException::new);
+        return orderMapper.toDto(order);
+    }
+
+
+    public OrderDto acceptOrder(UUID orderId) {
+
+        Order order = getOrder(orderId);
+
+        validatePendingOrder(order);
+
+        order.setStatus(OrderStatus.CONFIRMED);
+
+        return orderMapper.toDto(order);
+    }
+
+    public OrderDto cancelOrder(UUID orderId) {
+
+        Order order = getOrder(orderId);
+
+        validateCancelable(order);
+
+        order.setStatus(OrderStatus.CANCELED);
+        eventPublisher.publishEvent(new OrderCanceledEvent(order));
+
+        return orderMapper.toDto(order);
+    }
+
+    private void validateCancelable(Order order) {
+
+        if (order.getStatus() == OrderStatus.DELIVERED) {
+            throw new InvalidOrderStatusException();
+        }
+
+        if (order.getStatus() == OrderStatus.CANCELED) {
+            throw new OrderAlreadyProcessedException();
+        }
+    }
+
+    private void validatePendingOrder(Order order) {
+
+        if (order.getStatus() != OrderStatus.PENDING) {
+            throw new OrderAlreadyProcessedException();
+        }
+    }
+
+    private Order getOrder(UUID orderId) {
+
+        return orderRepository.findById(orderId)
+                .orElseThrow(OrderNotFoundException::new);
+    }
 }

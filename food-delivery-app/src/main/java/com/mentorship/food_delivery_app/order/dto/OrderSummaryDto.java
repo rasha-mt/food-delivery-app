@@ -1,4 +1,10 @@
 package com.mentorship.food_delivery_app.order.dto;
 
-public class OrderSummaryDTO {
-}
+import java.math.BigDecimal;
+
+public record OrderSummaryDto(
+        long totalOrders,
+        long delivered,
+        long canceled,
+        BigDecimal totalRevenue
+) {}
