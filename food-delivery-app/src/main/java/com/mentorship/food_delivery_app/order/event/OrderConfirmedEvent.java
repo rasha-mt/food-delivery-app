@@ -1,4 +1,6 @@
 package com.mentorship.food_delivery_app.order.event;
 
-public class OrderConfirmedEvent {
-}
+import com.mentorship.food_delivery_app.order.model.Order;
+
+public record OrderConfirmedEvent(Order order) {}
+

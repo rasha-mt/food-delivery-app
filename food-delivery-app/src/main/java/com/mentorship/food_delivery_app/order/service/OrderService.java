@@ -6,6 +6,7 @@ import com.mentorship.food_delivery_app.order.dto.OrderDto;
 import com.mentorship.food_delivery_app.order.dto.requests.PlaceOrderRequest;
 import com.mentorship.food_delivery_app.order.enums.OrderStatus;
 import com.mentorship.food_delivery_app.order.event.OrderCanceledEvent;
+import com.mentorship.food_delivery_app.order.event.OrderConfirmedEvent;
 import com.mentorship.food_delivery_app.order.event.OrderPlacedEvent;
 import com.mentorship.food_delivery_app.order.event.OrderStatusUpdatedEvent;
 import com.mentorship.food_delivery_app.order.exceptions.InvalidOrderStatusException;
@@ -89,6 +90,7 @@ public class OrderService {
         validatePendingOrder(order);
 
         order.setStatus(OrderStatus.CONFIRMED);
+        eventPublisher.publishEvent(new OrderConfirmedEvent(order));
 
         return orderMapper.toDto(order);
     }
