@@ -1,7 +1,9 @@
 package com.mentorship.food_delivery_app.order.controller;
 
 import com.mentorship.food_delivery_app.common.responses.ApiResponse;
-import com.mentorship.food_delivery_app.order.dto.OrderDto;
+import com.mentorship.food_delivery_app.customer.entity.Customer;
+import com.mentorship.food_delivery_app.customer.service.CustomerService;
+import com.mentorship.food_delivery_app.order.dto.OrderResponseDto;
 import com.mentorship.food_delivery_app.order.dto.requests.PlaceOrderRequest;
 import com.mentorship.food_delivery_app.order.enums.OrderStatus;
 import com.mentorship.food_delivery_app.order.model.Order;
@@ -19,6 +21,7 @@ import java.util.UUID;
 public class OrderController {
 
     private final OrderService orderService;
+    private final CustomerService customerService;
 
     @PostMapping
     public ResponseEntity<Order> placeOrder(
@@ -41,8 +44,9 @@ public class OrderController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<OrderDto>>> getCustomerOrders() {
-        List<OrderDto> orders = orderService.getCustomerOrders();
+    public ResponseEntity<ApiResponse<List<OrderResponseDto>>> getCustomerOrders() {
+        Customer customer = customerService.getCustomer();
+        List<OrderResponseDto> orders = orderService.getCustomerOrders(customer);
 
         return ResponseEntity.ok(
                 new ApiResponse<>(
@@ -54,8 +58,8 @@ public class OrderController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<OrderDto>> getOrderDetails(@PathVariable UUID orderId) {
-        OrderDto orderDetails = orderService.getOrderDetails(orderId);
+    public ResponseEntity<ApiResponse<OrderResponseDto>> getOrderDetails(@PathVariable UUID orderId) {
+        OrderResponseDto orderDetails = orderService.getOrderDetails(orderId);
         return ResponseEntity.ok(new ApiResponse<>(
                 200,
                 orderDetails,
@@ -64,11 +68,11 @@ public class OrderController {
     }
 
     @PatchMapping("/{id}/accept")
-    public ResponseEntity<ApiResponse<OrderDto>> acceptOrder(
+    public ResponseEntity<ApiResponse<OrderResponseDto>> acceptOrder(
             @PathVariable UUID id
     ) {
 
-        OrderDto response =
+        OrderResponseDto response =
                 orderService.acceptOrder(id);
 
         return ResponseEntity.ok(
@@ -81,11 +85,11 @@ public class OrderController {
     }
 
     @PatchMapping("/{id}/cancel")
-    public ResponseEntity<ApiResponse<OrderDto>> cancelOrder(
+    public ResponseEntity<ApiResponse<OrderResponseDto>> cancelOrder(
             @PathVariable UUID id
     ) {
 
-        OrderDto response =
+        OrderResponseDto response =
                 orderService.cancelOrder(id);
 
         return ResponseEntity.ok(

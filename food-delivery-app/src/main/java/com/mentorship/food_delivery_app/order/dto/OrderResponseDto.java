@@ -1,19 +1,32 @@
-package com.mentorship.food_delivery_app.order.mapper;
+package com.mentorship.food_delivery_app.order.dto;
 
-import com.mentorship.food_delivery_app.order.dto.OrderDto;
-import com.mentorship.food_delivery_app.order.dto.OrderItemsDto;
+import com.mentorship.food_delivery_app.order.enums.OrderStatus;
 import com.mentorship.food_delivery_app.order.model.Order;
 import com.mentorship.food_delivery_app.order.model.OrderItem;
-import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
-@Component
-public class OrderMapper {
+public record OrderResponseDto(
 
-    public OrderDto toDto(Order order) {
+        UUID orderId,
 
-        return new OrderDto(
+        UUID customerId,
+
+        UUID restaurantId,
+
+        OrderStatus status,
+
+        BigDecimal totalPrice,
+
+        List<OrderItemsDto> items,
+
+        LocalDateTime createdAt
+) {
+    public static OrderResponseDto from(Order order) {
+        return new OrderResponseDto(
                 order.getId(),
                 order.getCustomer().getId(),
                 order.getRestaurantId(),
@@ -24,7 +37,7 @@ public class OrderMapper {
         );
     }
 
-    private List<OrderItemsDto> mapItems(List<OrderItem> items) {
+    private static List<OrderItemsDto> mapItems(List<OrderItem> items) {
 
         return items.stream()
                 .map(item -> new OrderItemsDto(

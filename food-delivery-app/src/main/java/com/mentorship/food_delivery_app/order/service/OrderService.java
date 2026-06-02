@@ -2,7 +2,8 @@ package com.mentorship.food_delivery_app.order.service;
 
 import com.mentorship.food_delivery_app.customer.entity.Customer;
 import com.mentorship.food_delivery_app.customer.service.CustomerService;
-import com.mentorship.food_delivery_app.order.dto.OrderDto;
+import com.mentorship.food_delivery_app.order.dto.OrderResponseDto;
+import com.mentorship.food_delivery_app.order.dto.PagedResponse;
 import com.mentorship.food_delivery_app.order.dto.requests.OrderItemRequest;
 import com.mentorship.food_delivery_app.order.dto.requests.PlaceOrderRequest;
 import com.mentorship.food_delivery_app.order.enums.OrderStatus;
@@ -11,10 +12,8 @@ import com.mentorship.food_delivery_app.order.event.OrderConfirmedEvent;
 import com.mentorship.food_delivery_app.order.event.OrderPlacedEvent;
 import com.mentorship.food_delivery_app.order.event.OrderStatusUpdatedEvent;
 import com.mentorship.food_delivery_app.order.exceptions.InvalidOrderStatusException;
-import com.mentorship.food_delivery_app.order.exceptions.OrderAlreadyCanceledException;
 import com.mentorship.food_delivery_app.order.exceptions.OrderAlreadyProcessedException;
 import com.mentorship.food_delivery_app.order.exceptions.OrderNotFoundException;
-import com.mentorship.food_delivery_app.order.mapper.OrderMapper;
 import com.mentorship.food_delivery_app.order.model.Order;
 import com.mentorship.food_delivery_app.order.model.OrderItem;
 import com.mentorship.food_delivery_app.order.repository.OrderRepository;
@@ -22,6 +21,9 @@ import com.mentorship.food_delivery_app.restaurant.model.MenuItem;
 import com.mentorship.food_delivery_app.restaurant.service.MenuItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -37,7 +39,6 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final ApplicationEventPublisher eventPublisher;
     private final CustomerService customerService;
-    private final OrderMapper orderMapper;
     private final MenuItemService menuItemService;
 
     public Order placeOrder(PlaceOrderRequest request) {
@@ -98,23 +99,23 @@ public class OrderService {
         return updated;
     }
 
-    public List<OrderDto> getCustomerOrders() {
-        Customer customer = customerService.getCustomer();
+    public List<OrderResponseDto> getCustomerOrders(Customer customer) {
+
         List<Order> orders =
                 orderRepository.findByCustomerId(customer.getId());
         return orders.stream()
-                .map(orderMapper::toDto)
+                .map(OrderResponseDto::from)
                 .toList();
     }
 
-    public OrderDto getOrderDetails(UUID orderId) {
+    public OrderResponseDto getOrderDetails(UUID orderId) {
         Order order= orderRepository.findById(orderId)
                 .orElseThrow(OrderNotFoundException::new);
-        return orderMapper.toDto(order);
+        return  OrderResponseDto.from(order);
     }
 
 
-    public OrderDto acceptOrder(UUID orderId) {
+    public OrderResponseDto acceptOrder(UUID orderId) {
 
         Order order = getOrder(orderId);
 
@@ -123,10 +124,10 @@ public class OrderService {
         order.setStatus(OrderStatus.CONFIRMED);
         eventPublisher.publishEvent(new OrderConfirmedEvent(order));
 
-        return orderMapper.toDto(order);
+        return OrderResponseDto.from(order);
     }
 
-    public OrderDto cancelOrder(UUID orderId) {
+    public OrderResponseDto cancelOrder(UUID orderId) {
 
         Order order = getOrder(orderId);
 
@@ -135,7 +136,7 @@ public class OrderService {
         order.setStatus(OrderStatus.CANCELED);
         eventPublisher.publishEvent(new OrderCanceledEvent(order));
 
-        return orderMapper.toDto(order);
+        return  OrderResponseDto.from(order);
     }
 
     private void validateCancelable(Order order) {
@@ -161,4 +162,30 @@ public class OrderService {
         return orderRepository.findById(orderId)
                 .orElseThrow(OrderNotFoundException::new);
     }
+
+    public PagedResponse<OrderResponseDto> getMyOrdersHistory(
+            int page,
+            int size
+    ) {
+
+        Customer customer = customerService.getCustomer();
+        Page<Order> orders =
+                orderRepository.findByCustomerId(
+                        customer.getId(),
+                        PageRequest.of(page, size)
+                );
+
+        return new PagedResponse<>(
+                orders.getContent()
+                        .stream()
+                        .map(OrderResponseDto::from)
+                        .toList(),
+                orders.getNumber(),
+                orders.getSize(),
+                orders.getTotalElements(),
+                orders.getTotalPages()
+        );
+    }
+
+
 }

@@ -1,19 +1,26 @@
 package com.mentorship.food_delivery_app.customer.controller;
 
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.mentorship.food_delivery_app.order.dto.OrderResponseDto;
+import com.mentorship.food_delivery_app.order.dto.PagedResponse;
+import com.mentorship.food_delivery_app.order.service.OrderService;
+import lombok.AllArgsConstructor;
+import org.springframework.web.bind.annotation.*;
+
 
 @RestController
 @RequestMapping("/api/v1/customer")
+@AllArgsConstructor
 public class CustomerController {
-    private final OrderService
-    @GetMapping("/orders")
-    public ResponseEntity<?> getOrders(@RequestHeader("Authorization") String token){
+    private final OrderService orderService;
 
-        return ResponseEntity.ok().body(items);
+    @GetMapping("/orders")
+    public PagedResponse<OrderResponseDto> getMyOrders(
+            @RequestHeader("Authorization") String token,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+
+        return orderService.getMyOrdersHistory(page, size);
     }
 
 }
