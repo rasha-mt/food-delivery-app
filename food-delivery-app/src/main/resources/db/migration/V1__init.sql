@@ -52,7 +52,7 @@ CREATE TABLE IF NOT EXISTS customer
     customer_id                   UUID PRIMARY KEY DEFAULT uuidv7(),
     customer_user_id              UUID NOT NULL UNIQUE, -- REFERENCES users(user_id)
     customer_default_address_id   UUID,                 --REFERENCES customer_address(customer_address_id)
-    customer_preferred_payment_id INT                   --  REFERENCES payment_type_config(payment_type_config_id)
+    customer_preferred_payment_id INT ,   --  REFERENCES payment_type_config(payment_type_config_id)
 );
 CREATE TABLE IF NOT EXISTS customer_address
 (
@@ -209,20 +209,32 @@ CREATE TABLE IF NOT EXISTS order_item
     order_item_note         VARCHAR(255)
 );
 ------------------------------PAYMENT---------------------
+CREATE TABLE IF NOT EXISTS payment
+(
+    payment_id UUID PRIMARY KEY DEFAULT uuidv7(),
+    payment_amount     DECIMAL(10, 2) CHECK ( payment_amount > 0 ),
+    payment_method      VARCHAR(255) NOT NULL,
+    payment_status      VARCHAR(255) NOT NULL,
+    payment_order_id     UUID          NOT NULL, -- REFERENCES orders(order_id)
+    payment_created_at  TIMESTAMP        DEFAULT CURRENT_TIMESTAMP
+    );
+
 
 CREATE TABLE IF NOT EXISTS payment_integration_type
 (
-    payment_integration_type_name VARCHAR(20) PRIMARY KEY
+    payment_integration_type_id   INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    payment_integration_type_name VARCHAR(20)
 );
 
 CREATE TABLE IF NOT EXISTS payment_type_config
 (
     payment_type_config_id   INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    payment_integration_type VARCHAR(20) NOT NULL, --REFERENCES payment_integration_type(payment_integration_type_name)
+    payment_integration_type_id INT NOT NULL, --REFERENCES payment_integration_type(payment_integration_type_id)
     config_details           TEXT        NOT NULL
 );
 CREATE TABLE IF NOT EXISTS transaction_status
 (
+    transaction_status_id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     status VARCHAR(20) NOT NULL
 );
 

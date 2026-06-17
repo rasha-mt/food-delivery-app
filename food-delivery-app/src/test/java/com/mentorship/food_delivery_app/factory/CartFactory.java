@@ -3,7 +3,7 @@ package com.mentorship.food_delivery_app.factory;
 import com.mentorship.food_delivery_app.cart.model.Cart;
 import com.mentorship.food_delivery_app.cart.model.CartItem;
 import com.mentorship.food_delivery_app.cart.repository.CartRepository;
-import com.mentorship.food_delivery_app.customer.entity.Customer;
+import com.mentorship.food_delivery_app.customer.model.Customer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

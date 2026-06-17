@@ -6,7 +6,7 @@ import com.mentorship.food_delivery_app.cart.model.CartItem;
 import com.mentorship.food_delivery_app.cart.repository.CartItemRepository;
 import com.mentorship.food_delivery_app.cart.repository.CartRepository;
 import com.mentorship.food_delivery_app.common.secuirty.jwt.JwtService;
-import com.mentorship.food_delivery_app.customer.entity.Customer;
+import com.mentorship.food_delivery_app.customer.model.Customer;
 import com.mentorship.food_delivery_app.customer.repository.CustomerRepository;
 import com.mentorship.food_delivery_app.factory.CartFactory;
 import com.mentorship.food_delivery_app.factory.CartItemFactory;
