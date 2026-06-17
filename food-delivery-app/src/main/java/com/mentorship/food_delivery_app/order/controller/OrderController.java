@@ -1,7 +1,7 @@
 package com.mentorship.food_delivery_app.order.controller;
 
 import com.mentorship.food_delivery_app.common.responses.ApiResponse;
-import com.mentorship.food_delivery_app.customer.entity.Customer;
+import com.mentorship.food_delivery_app.customer.model.Customer;
 import com.mentorship.food_delivery_app.customer.service.CustomerService;
 import com.mentorship.food_delivery_app.order.dto.OrderResponseDto;
 import com.mentorship.food_delivery_app.order.dto.requests.PlaceOrderRequest;

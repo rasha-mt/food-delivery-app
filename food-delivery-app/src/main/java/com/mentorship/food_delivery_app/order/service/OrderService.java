@@ -1,6 +1,6 @@
 package com.mentorship.food_delivery_app.order.service;
 
-import com.mentorship.food_delivery_app.customer.entity.Customer;
+import com.mentorship.food_delivery_app.customer.model.Customer;
 import com.mentorship.food_delivery_app.customer.service.CustomerService;
 import com.mentorship.food_delivery_app.order.dto.OrderResponseDto;
 import com.mentorship.food_delivery_app.order.dto.PagedResponse;

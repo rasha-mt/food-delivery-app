@@ -1,6 +1,6 @@
 package com.mentorship.food_delivery_app.order.model;
 
-import com.mentorship.food_delivery_app.customer.entity.Customer;
+import com.mentorship.food_delivery_app.customer.model.Customer;
 import com.mentorship.food_delivery_app.order.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.*;
