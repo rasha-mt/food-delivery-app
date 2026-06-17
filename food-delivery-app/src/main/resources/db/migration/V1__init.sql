@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS role
 );
 CREATE TABLE IF NOT EXISTS role_permission
 (
+    role_permission_id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     permission_id INT NOT NULL,-- REFERENCES permission(permission)
     role_id       INT NOT NULL -- REFERENCES role(role_id)
 );
@@ -43,6 +44,7 @@ CREATE TABLE IF NOT EXISTS users
 );
 CREATE TABLE IF NOT EXISTS user_role
 (
+    user_role_id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     role_id INT  NOT NULL, --REFERENCES role(role_id)
     user_id UUID NOT NULL  --REFERENCES users(user_id)
 );
@@ -97,9 +99,9 @@ CREATE TABLE IF NOT EXISTS category
 );
 CREATE TABLE IF NOT EXISTS restaurant_category
 (
+    restaurant_category_id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     category_id   INT  NOT NULL, --REFERENCES category(category_id)
-    restaurant_id UUID NOT NULL,-- REFERENCES restaurant(restaurant_id)
-    PRIMARY KEY (category_id, restaurant_id)
+    restaurant_id UUID NOT NULL-- REFERENCES restaurant(restaurant_id)
 );
 CREATE TABLE IF NOT EXISTS restaurant_menu
 (
