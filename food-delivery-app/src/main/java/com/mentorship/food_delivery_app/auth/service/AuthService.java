@@ -1,10 +1,8 @@
-package com.mentorship.food_delivery_app.otp.service;
+package com.mentorship.food_delivery_app.auth.service;
 
-import com.mentorship.food_delivery_app.common.secuirty.jwt.JwtService;
-import com.mentorship.food_delivery_app.common.secuirty.jwt.RefreshTokenService;
-import com.mentorship.food_delivery_app.otp.dto.JwtResponse;
-import com.mentorship.food_delivery_app.otp.dto.request.VerifyOtpRequest;
-import com.mentorship.food_delivery_app.otp.repository.EmailOtpRepository;
+import com.mentorship.food_delivery_app.auth.dto.JwtResponse;
+import com.mentorship.food_delivery_app.auth.dto.request.VerifyOtpRequest;
+import com.mentorship.food_delivery_app.auth.repository.EmailOtpRepository;
 import com.mentorship.food_delivery_app.user.model.User;
 import com.mentorship.food_delivery_app.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +29,6 @@ public class AuthService {
 
         // hash OTP before storing
         String hashedOtp = passwordEncoder.encode(otp);
-
 
         otpService.saveOtp(user,otp);
 

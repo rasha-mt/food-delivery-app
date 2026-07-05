@@ -252,3 +252,31 @@ CREATE TABLE IF NOT EXISTS transaction
     transaction_time           TIMESTAMP        DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE email_otps (
+                            id UUID PRIMARY KEY,
+                            email VARCHAR(255) NOT NULL,
+                            otp_hash VARCHAR(255) NOT NULL,
+                            expires_at TIMESTAMP NOT NULL,
+                            used BOOLEAN DEFAULT FALSE,
+                            attempts INT DEFAULT 0,
+                            created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE refresh_tokens (
+                                id UUID PRIMARY KEY,
+                                user_id BIGINT REFERENCES users(id),
+                                token VARCHAR(500) NOT NULL,
+                                expires_at TIMESTAMP NOT NULL,
+                                revoked BOOLEAN DEFAULT FALSE
+);
+
+CREATE TABLE email_logs (
+                            id BIGSERIAL PRIMARY KEY,
+                            recipient VARCHAR(255),
+                            subject VARCHAR(255),
+                            provider VARCHAR(50),
+                            status VARCHAR(20),
+                            error_message TEXT,
+                            created_at TIMESTAMP DEFAULT NOW()
+);
+

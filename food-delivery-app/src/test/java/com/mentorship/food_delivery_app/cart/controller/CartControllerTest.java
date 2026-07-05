@@ -5,13 +5,14 @@ import com.mentorship.food_delivery_app.cart.model.Cart;
 import com.mentorship.food_delivery_app.cart.model.CartItem;
 import com.mentorship.food_delivery_app.cart.repository.CartItemRepository;
 import com.mentorship.food_delivery_app.cart.repository.CartRepository;
-import com.mentorship.food_delivery_app.common.secuirty.jwt.JwtService;
+import com.mentorship.food_delivery_app.auth.service.JwtService;
 import com.mentorship.food_delivery_app.customer.model.Customer;
 import com.mentorship.food_delivery_app.customer.repository.CustomerRepository;
 import com.mentorship.food_delivery_app.factory.CartFactory;
 import com.mentorship.food_delivery_app.factory.CartItemFactory;
 import com.mentorship.food_delivery_app.factory.CustomerFactory;
 import com.mentorship.food_delivery_app.factory.MenuItemFactory;
+import com.mentorship.food_delivery_app.auth.dto.JwtResponse;
 import com.mentorship.food_delivery_app.restaurant.model.MenuItem;
 import com.mentorship.food_delivery_app.restaurant.repository.MenuItemRepository;
 import io.restassured.RestAssured;
@@ -74,7 +75,7 @@ class CartControllerTest extends BaseIntegrationTest {
         customerRepository.deleteAll();
 
         customer = customerFactory.create();
-        token = jwtService.generateToken(customer.getId());
+        JwtResponse token = jwtService.generateAccessToken(customer.getUser().getUserEmail());
 
         restaurantId = UUID.randomUUID();
     }

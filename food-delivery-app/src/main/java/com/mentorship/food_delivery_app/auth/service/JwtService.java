@@ -1,4 +1,4 @@
-package com.mentorship.food_delivery_app.common.secuirty.jwt;
+package com.mentorship.food_delivery_app.auth.service;
 
 import com.mentorship.food_delivery_app.user.model.User;
 import io.jsonwebtoken.Claims;

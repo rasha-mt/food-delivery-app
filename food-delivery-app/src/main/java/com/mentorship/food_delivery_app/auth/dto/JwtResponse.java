@@ -1,4 +1,4 @@
-package com.mentorship.food_delivery_app.otp.dto;
+package com.mentorship.food_delivery_app.auth.dto;
 
 public record JwtResponse(
         String accessToken,

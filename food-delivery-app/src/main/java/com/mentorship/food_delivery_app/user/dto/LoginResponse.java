@@ -1,4 +1,12 @@
 package com.mentorship.food_delivery_app.user.dto;
 
-public class LoginResponse {
+import com.mentorship.food_delivery_app.user.enums.AuthStatus;
+
+public record LoginResponse(
+
+        AuthStatus status,
+
+        String message
+
+) {
 }

@@ -1,6 +1,6 @@
-package com.mentorship.food_delivery_app.otp.repository;
+package com.mentorship.food_delivery_app.auth.repository;
 
-import com.mentorship.food_delivery_app.otp.models.EmailOtp;
+import com.mentorship.food_delivery_app.auth.models.EmailOtp;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

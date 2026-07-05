@@ -1,4 +1,4 @@
-package com.mentorship.food_delivery_app.otp.exception;
+package com.mentorship.food_delivery_app.auth.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

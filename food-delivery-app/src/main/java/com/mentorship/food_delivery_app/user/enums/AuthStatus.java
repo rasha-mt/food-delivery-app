@@ -1,4 +1,4 @@
-package com.mentorship.food_delivery_app.otp.enums;
+package com.mentorship.food_delivery_app.user.enums;
 
 public enum AuthStatus {
 

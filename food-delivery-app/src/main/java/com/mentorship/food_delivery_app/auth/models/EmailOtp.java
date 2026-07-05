@@ -1,4 +1,4 @@
-package com.mentorship.food_delivery_app.otp.models;
+package com.mentorship.food_delivery_app.auth.models;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

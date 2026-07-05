@@ -1,7 +1,7 @@
-package com.mentorship.food_delivery_app.common.secuirty.jwt;
+package com.mentorship.food_delivery_app.auth.service;
 
-import com.mentorship.food_delivery_app.otp.models.RefreshToken;
-import com.mentorship.food_delivery_app.otp.repository.RefreshTokenRepository;
+import com.mentorship.food_delivery_app.auth.models.RefreshToken;
+import com.mentorship.food_delivery_app.auth.repository.RefreshTokenRepository;
 import com.mentorship.food_delivery_app.user.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

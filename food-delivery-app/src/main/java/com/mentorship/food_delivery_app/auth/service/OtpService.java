@@ -1,8 +1,8 @@
-package com.mentorship.food_delivery_app.otp.service;
+package com.mentorship.food_delivery_app.auth.service;
 
-import com.mentorship.food_delivery_app.otp.exception.BadCredentialsException;
-import com.mentorship.food_delivery_app.otp.models.EmailOtp;
-import com.mentorship.food_delivery_app.otp.repository.EmailOtpRepository;
+import com.mentorship.food_delivery_app.auth.exception.BadCredentialsException;
+import com.mentorship.food_delivery_app.auth.models.EmailOtp;
+import com.mentorship.food_delivery_app.auth.repository.EmailOtpRepository;
 import com.mentorship.food_delivery_app.user.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;

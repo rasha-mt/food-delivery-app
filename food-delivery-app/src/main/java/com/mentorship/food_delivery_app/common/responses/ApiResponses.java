@@ -1,6 +1,7 @@
 package com.mentorship.food_delivery_app.common.responses;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import lombok.Getter;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 
@@ -8,7 +9,8 @@ import java.util.Collections;
 import java.util.Map;
 
 @JsonPropertyOrder({ "httpHeaders", "httpStatusCode", "message", "data", "otherParams" })
-public class ApiResponseBuilder<T> {
+@Getter
+public class ApiResponses<T> {
 
     private final HttpHeaders httpHeaders;
     private final int httpStatusCode;
@@ -16,7 +18,7 @@ public class ApiResponseBuilder<T> {
     private final T data;
     private final Map<String, Object> otherParams;
 
-    private ApiResponseBuilder(ApiResponseBuilder builder) {
+    private ApiResponses(ApiResponseBuilder builder) {
         this.httpHeaders = builder.httpHeaders;
         this.httpStatusCode = builder.httpStatusCode;
         this.message = builder.message;
@@ -73,8 +75,8 @@ public class ApiResponseBuilder<T> {
             return this;
         }
 
-        public ResponseEntity<ApiResponse> build() {
-            ApiResponse<T> apiResponse = new ApiResponse<>(this);
+        public ResponseEntity<ApiResponses> build() {
+            ApiResponses<T> apiResponse = new ApiResponses<>(this);
             return ResponseEntity.status(apiResponse.getHttpStatusCode()).headers(apiResponse.getHttpHeaders())
                     .body(apiResponse);
         }

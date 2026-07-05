@@ -1,6 +1,6 @@
-package com.mentorship.food_delivery_app.otp.repository;
+package com.mentorship.food_delivery_app.auth.repository;
 
-import com.mentorship.food_delivery_app.otp.models.RefreshToken;
+import com.mentorship.food_delivery_app.auth.models.RefreshToken;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

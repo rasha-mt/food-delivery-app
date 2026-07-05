@@ -2,7 +2,7 @@ package com.mentorship.food_delivery_app.common.secuirty.filter;
 
 import com.mentorship.food_delivery_app.common.exceptions.UnauthorizedException;
 import com.mentorship.food_delivery_app.common.secuirty.UserPrincipal;
-import com.mentorship.food_delivery_app.common.secuirty.jwt.JwtService;
+import com.mentorship.food_delivery_app.auth.service.JwtService;
 import com.mentorship.food_delivery_app.customer.service.CustomUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
