@@ -1,5 +1,6 @@
 package com.mentorship.food_delivery_app.common.secuirty.jwt;
 
+import com.mentorship.food_delivery_app.user.model.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -23,11 +24,15 @@ public class JwtService {
         return Keys.hmacShaKeyFor(Base64.getDecoder().decode(jwtSecret));
     }
 
-    public String generateToken(UUID customerId) {
+    public String generateAccessToken(User user) {
+
         return Jwts.builder()
-                .setSubject(String.valueOf(customerId))
+                .setSubject(user.getUserEmail())
+                .claim("userId", user.getId())
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 3600000))
+                .setExpiration(
+                        new Date(System.currentTimeMillis() + 900000)
+                )
                 .signWith(getKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -58,4 +63,16 @@ public class JwtService {
         }
     }
 
+    public String generateRefreshToken(User user) {
+
+        return Jwts.builder()
+                .setSubject(user.getUserEmail())
+                .claim("type", "refresh")
+                .setIssuedAt(new Date())
+                .setExpiration(
+                        new Date(System.currentTimeMillis() + 604800000)
+                )
+                .signWith(getKey(), SignatureAlgorithm.HS256)
+                .compact();
+    }
 }
